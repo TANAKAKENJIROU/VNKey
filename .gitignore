@@ -21,3 +21,9 @@ Windows/installer/out/
 Windows/installer/mkinst.cmd
 
 Windows/Tests/livetest.out
+
+Tools/autoswitch/driver/bench.exe
+Tools/autoswitch/driver/drvlazy.exe
+Tools/autoswitch/sim/sim.exe
+Tools/autoswitch/test/harness.exe
+Tools/autoswitch/touch/touchsim.exe

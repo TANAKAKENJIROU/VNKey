@@ -399,8 +399,8 @@ static void buildMain() {
     endGroup();
     beginGroup(nullptr);
     toggleRow(L"Mở VNKey khi đăng nhập", L"Tự mở VNKey mỗi khi bạn đăng nhập vào Windows.", C_LOGIN, prefs::launchAtLogin());
-    toggleRow(L"Tự động cập nhật", L"Mỗi ngày VNKey kiểm tra bản mới trên vikey.app, tự tải về và cài khi bạn thoát VNKey hoặc tắt máy.", C_UPDATE, prefs::getInt(L"AutoUpdate", 1) != 0);
-    HWND fb = row(L"Góp ý", L"Báo lỗi hoặc góp ý cho VNKey: mở trang vikey.app/feedback trong trình duyệt.", L"VikeyButton", C_FEEDBACK, 120, 26, WS_TABSTOP);
+    toggleRow(L"Tự động cập nhật", L"Mỗi ngày VNKey kiểm tra bản mới trên GitHub, tự tải về và cài khi bạn thoát VNKey hoặc tắt máy.", C_UPDATE, prefs::getInt(L"AutoUpdate", 1) != 0);
+    HWND fb = row(L"Góp ý", L"Báo lỗi hoặc góp ý cho VNKey: mở trang GitHub của VNKey trong trình duyệt.", L"VikeyButton", C_FEEDBACK, 120, 26, WS_TABSTOP);
     SetWindowTextW(fb, L"Gửi góp ý…"); setBg(fb, GROUP);
     endGroup();
     refreshEnabled();
@@ -432,7 +432,7 @@ static LRESULT CALLBACK mainProc(HWND h, UINT msg, WPARAM wp, LPARAM lp) {
         case C_EMOJI: prefs::setInt(L"EmojiPicker", toggleOn(c)); core::reloadSettings(); emoji::settingsChanged(); afterHotkeyChange(); break;
         case C_LOGIN: prefs::setLaunchAtLogin(toggleOn(c)); setToggle(c, prefs::launchAtLogin()); break;
         case C_UPDATE: prefs::setInt(L"AutoUpdate", toggleOn(c)); break;
-        case C_FEEDBACK: ShellExecuteW(nullptr, L"open", L"https://vikey.app/feedback?platform=windows&v=" VIKEY_VERSION_W, nullptr, nullptr, SW_SHOWNORMAL); break;
+        case C_FEEDBACK: ShellExecuteW(nullptr, L"open", L"https://github.com/TANAKAKENJIROU/VNKey", nullptr, nullptr, SW_SHOWNORMAL); break;
         }
         return 0; }
     case WM_REBUILD: buildMain(); return 0;
@@ -772,10 +772,7 @@ static LRESULT CALLBACK aboutProc(HWND h, UINT msg, WPARAM wp, LPARAM lp) {
         _aboutLinks.clear(); int y = 196;
         std::vector<std::vector<Seg>> lines = {
             {{L"NGUYEN TRAN HOANG", L"", fSmall, SECONDARY}},
-            {{L"Dựa trên ", L"", fSmall, SECONDARY}, {L"OpenKey", L"https://github.com/tuyenvm/OpenKey", fSmall, ACCENT}, {L" của Tuyen Mai", L"", fSmall, SECONDARY}},
-            {{L"Mã nguồn mở theo giấy phép GPL-3.0", L"", fSmall, SECONDARY}},
-            {},
-            {{L"GitHub", L"https://github.com/TANAKAKENJIROU/VNKey", fSmall, ACCENT}, {L"  ·  ", L"", fSmall, SECONDARY}, {L"Ghi nhận", L"ack:", fSmall, ACCENT}}};
+            {{L"GitHub", L"https://github.com/TANAKAKENJIROU/VNKey", fSmall, ACCENT}}};
         for (auto& l : lines) { if (l.empty()) { y += 8; continue; } y += drawSegs(mem, l, 0, y, rc.right, true, _aboutLinks) + 1; }
         BitBlt(dc, 0, 0, rc.right, rc.bottom, mem, 0, 0, SRCCOPY); SelectObject(mem, old); DeleteObject(bmp); DeleteDC(mem);
         EndPaint(h, &ps); return 0; }
@@ -792,7 +789,7 @@ void showAbout(HINSTANCE inst) {
     if (_aboutWin) { bringToFront(_aboutWin); return; }
     static bool reg = false;
     if (!reg) { WNDCLASSW wc = {}; wc.lpfnWndProc = aboutProc; wc.hInstance = inst; wc.lpszClassName = L"VikeyAbout"; wc.hCursor = LoadCursor(nullptr, IDC_ARROW); wc.hIcon = LoadIconW(inst, MAKEINTRESOURCEW(IDI_APP)); RegisterClassW(&wc); reg = true; }
-    RECT wr = {0, 0, 300, 304}; AdjustWindowRectEx(&wr, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, FALSE, 0);
+    RECT wr = {0, 0, 300, 240}; AdjustWindowRectEx(&wr, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, FALSE, 0);
     _aboutWin = CreateWindowExW(0, L"VikeyAbout", L"Giới thiệu VNKey", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, 0, 0, wr.right - wr.left, wr.bottom - wr.top, nullptr, nullptr, inst, nullptr);
     centerOnMouseScreen(_aboutWin);
     bringToFront(_aboutWin);
