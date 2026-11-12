@@ -80,6 +80,7 @@ static bool httpGet(const std::wstring& url, std::vector<unsigned char>& out, un
     out.clear();
     URL_COMPONENTS uc = {sizeof(uc)}; wchar_t host[256], path[2048]; uc.lpszHostName = host; uc.dwHostNameLength = 256; uc.lpszUrlPath = path; uc.dwUrlPathLength = 2048;
     if (!WinHttpCrackUrl(url.c_str(), 0, 0, &uc)) return false;
+    if (uc.nScheme != INTERNET_SCHEME_HTTPS) return false;
     HINTERNET s = WinHttpOpen(L"Vikey/" VIKEY_VERSION, WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
     if (!s) return false;
     bool ok = false;
@@ -131,8 +132,29 @@ static bool verify(const std::vector<unsigned char>& file, const std::wstring& s
 }
 static std::wstring updatesDir() { std::wstring d = prefs::appDataDir() + L"\\updates"; CreateDirectoryW(d.c_str(), nullptr); return d; }
 static std::wstring installerPath(const Release& r) { return updatesDir() + L"\\Vikey-" + r.version + L"-" + ARCH + L"-Setup.exe"; }
-static void rememberPending(const std::wstring& path, const std::wstring& version) { prefs::setString(L"PendingUpdatePath", path.c_str()); prefs::setString(L"PendingUpdateVersion", version.c_str()); _pendingPath = path; }
-static void forgetPending() { prefs::remove(L"PendingUpdatePath"); prefs::remove(L"PendingUpdateVersion"); _pendingPath.clear(); }
+static void rememberPending(const std::wstring& path, const std::wstring& version, const std::wstring& signature) {
+    prefs::setString(L"PendingUpdatePath", path.c_str()); prefs::setString(L"PendingUpdateVersion", version.c_str());
+    prefs::setString(L"PendingUpdateSignature", signature.c_str()); _pendingPath = path;
+}
+static void forgetPending() { prefs::remove(L"PendingUpdatePath"); prefs::remove(L"PendingUpdateVersion"); prefs::remove(L"PendingUpdateSignature"); _pendingPath.clear(); }
+static bool installerInUpdatesDir(const std::wstring& path) {
+    std::wstring dir = updatesDir();
+    if (path.size() <= dir.size() || _wcsnicmp(path.c_str(), dir.c_str(), dir.size()) != 0) return false;
+    if (path[dir.size()] != L'\\') return false;
+    if (path.find(L"..") != std::wstring::npos) return false;
+    return true;
+}
+static bool readAll(const std::wstring& path, std::vector<unsigned char>& out) {
+    std::ifstream f(path, std::ios::binary); if (!f) return false;
+    f.seekg(0, std::ios::end); std::streamoff n = f.tellg(); if (n <= 0 || (unsigned long long)n > (200ull << 20)) return false;
+    f.seekg(0); out.resize((size_t)n); f.read((char*)out.data(), n); return (bool)f;
+}
+static bool pendingIsTrusted(const std::wstring& path) {
+    std::wstring sig = prefs::getString(L"PendingUpdateSignature", L"");
+    if (sig.empty() || !installerInUpdatesDir(path)) return false;
+    std::vector<unsigned char> file; if (!readAll(path, file)) return false;
+    return verify(file, sig);
+}
 
 /// Downloads and verifies the installer; keeps it for the install.
 static bool download(const Release& r) {
@@ -143,10 +165,11 @@ static bool download(const Release& r) {
     if (!verify(file, r.signature)) { _lastError = L"Chữ ký của bản cập nhật không hợp lệ."; return false; }
     std::ofstream f(path, std::ios::binary); f.write((const char*)file.data(), file.size()); f.close();
     if (!f) { _lastError = L"Không ghi được file cập nhật."; return false; }
-    rememberPending(path, r.version);
+    rememberPending(path, r.version, r.signature);
     return true;
 }
 static bool runInstaller(const std::wstring& path, bool silent) {
+    if (!pendingIsTrusted(path)) { _lastError = L"Chữ ký của bản cập nhật không hợp lệ."; return false; }
     std::wstring args = std::wstring(silent ? L"/VERYSILENT" : L"/SILENT") + L" /SUPPRESSMSGBOXES /NORESTART /CLOSEAPPLICATIONS /RELAUNCH=1";
     HINSTANCE h = ShellExecuteW(nullptr, L"open", path.c_str(), args.c_str(), nullptr, silent ? SW_HIDE : SW_SHOW);
     return (INT_PTR)h > 32;

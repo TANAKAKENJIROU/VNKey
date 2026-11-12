@@ -1,3 +1,7 @@
+# VNKey
+
+VNKey 1.0.1, by NGUYEN TRAN HOANG. Fork of Vikey by Tony Dinh, which is based on OpenKey by Tuyen Mai. GPL-3.0. Source: https://github.com/TANAKAKENJIROU/VNKey
+
 # Vikey
 
 Vietnamese typing for macOS, Windows, Linux, iOS and Android that switches between Vietnamese and English for you.

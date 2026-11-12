@@ -1,4 +1,4 @@
-// Vikey's windows on Windows, 1:1 with the macOS app (App/Views): the main window (header with
+// VNKey's windows on Windows, 1:1 with the macOS app (App/Views): the main window (header with
 // icon, wordmark, hotkey hint and the Tiếng Việt / English switch, then a grouped form), the
 // onboarding (OnboardingView.swift minus the Accessibility step), the About panel, the
 // Acknowledgements window and the typing-log window. Drawn with GDI+ so the toggles, segmented
@@ -279,7 +279,7 @@ static LRESULT CALLBACK tipProc(HWND h, UINT m, WPARAM w, LPARAM l) {
         Graphics g(dc); g.SetSmoothingMode(SmoothingModeAntiAlias); Pen p(gp(RGB(170, 170, 175)), 1.2f); g.DrawEllipse(&p, 1.5f, 1.5f, 13.0f, 13.0f);
         SelectObject(dc, fSmall); SetBkMode(dc, TRANSPARENT); SetTextColor(dc, RGB(150, 150, 155)); RECT r = {0, -1, 16, 16}; DrawTextW(dc, L"?", 1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
         EndPaint(h, &ps); return 0; }
-    case WM_LBUTTONUP: { wchar_t t[512]; GetWindowTextW(h, t, 512); MessageBoxW(GetParent(h), t, L"Vikey", MB_OK | MB_ICONINFORMATION); return 0; }
+    case WM_LBUTTONUP: { wchar_t t[512]; GetWindowTextW(h, t, 512); MessageBoxW(GetParent(h), t, L"VNKey", MB_OK | MB_ICONINFORMATION); return 0; }
     case WM_ERASEBKGND: return 1;
     }
     return DefWindowProcW(h, m, w, l);
@@ -375,9 +375,9 @@ static void buildMain() {
     toggleRow(L"Âm báo khi chuyển", L"Phát một âm ngắn mỗi lần bạn bấm phím chuyển Anh/Việt: lên giọng khi sang tiếng Việt, xuống giọng khi sang tiếng Anh.", C_BEEP, HAS_BEEP(hk) != 0);
     endGroup();
     beginGroup(L"Tự chuyển");
-    toggleRow(L"Tự chuyển Anh/Việt", L"Gõ một từ tiếng Anh khi đang ở tiếng Việt (hoặc ngược lại), Vikey tự sửa từ đó và chuyển chế độ. Bấm Xoá ngay sau đó để hoàn tác.", C_AUTO, prefs::getInt(L"AutoSwitchByTyping", 1) != 0);
-    toggleRow(L"Tạm dừng 5 giây", L"Khi bạn tự bấm chuyển Anh/Việt, Vikey không tự chuyển trong 5 giây, để giữ đúng lựa chọn của bạn.", C_PAUSE, prefs::getInt(L"PauseAutoAfterManual", 1) != 0);
-    toggleRow(L"Nhớ theo ứng dụng", L"Vikey nhớ bạn dùng tiếng Anh hay tiếng Việt ở mỗi ứng dụng và tự chuyển lại khi bạn quay về ứng dụng đó.", C_SMART, prefs::getInt(L"UseSmartSwitchKey", 1) != 0);
+    toggleRow(L"Tự chuyển Anh/Việt", L"Gõ một từ tiếng Anh khi đang ở tiếng Việt (hoặc ngược lại), VNKey tự sửa từ đó và chuyển chế độ. Bấm Xoá ngay sau đó để hoàn tác.", C_AUTO, prefs::getInt(L"AutoSwitchByTyping", 1) != 0);
+    toggleRow(L"Tạm dừng 5 giây", L"Khi bạn tự bấm chuyển Anh/Việt, VNKey không tự chuyển trong 5 giây, để giữ đúng lựa chọn của bạn.", C_PAUSE, prefs::getInt(L"PauseAutoAfterManual", 1) != 0);
+    toggleRow(L"Nhớ theo ứng dụng", L"VNKey nhớ bạn dùng tiếng Anh hay tiếng Việt ở mỗi ứng dụng và tự chuyển lại khi bạn quay về ứng dụng đó.", C_SMART, prefs::getInt(L"UseSmartSwitchKey", 1) != 0);
     toggleRow(L"Nhớ theo trang web", L"Trong Chrome, Edge, Brave, Vivaldi, Opera, Firefox: nhớ tiếng Anh hay tiếng Việt cho từng trang web. Chỉ đọc địa chỉ tab đang mở, ngay trên máy bạn.", C_SITE, prefs::getInt(L"SmartSwitchPerSite", 1) != 0);
     endGroup();
     beginGroup(L"Gõ tiếng Việt");
@@ -389,7 +389,7 @@ static void buildMain() {
     SendMessageW(mark, CB_ADDSTRING, 0, (LPARAM)L"hoà, thuý"); SendMessageW(mark, CB_ADDSTRING, 0, (LPARAM)L"hòa, thúy"); SendMessageW(mark, CB_SETCURSEL, prefs::getInt(L"ModernOrthography", 1) ? 0 : 1, 0);
     SetWindowPos(mark, nullptr, W - MARGIN - 16 - 130, _y - ROW + 4, 130, 200, SWP_NOZORDER);
     toggleRow(L"Kiểm tra chính tả", L"Chỉ bỏ dấu khi từ đang gõ đúng quy tắc chính tả tiếng Việt.", C_SPELL, prefs::getInt(L"Spelling", 1) != 0);
-    toggleRow(L"Trả lại phím khi sai", L"Khi gõ xong một từ sai chính tả tiếng Việt, Vikey trả lại đúng các phím bạn đã gõ.", C_RESTORE, prefs::getInt(L"RestoreIfInvalidWord", 1) != 0);
+    toggleRow(L"Trả lại phím khi sai", L"Khi gõ xong một từ sai chính tả tiếng Việt, VNKey trả lại đúng các phím bạn đã gõ.", C_RESTORE, prefs::getInt(L"RestoreIfInvalidWord", 1) != 0);
     endGroup();
     beginGroup(nullptr);
     bool emojiOn = prefs::getInt(L"EmojiPicker", 0) != 0;
@@ -398,9 +398,9 @@ static void buildMain() {
     if (emojiOn) emojiRec = recorderRow(L"Phím mở bảng emoji", L"Một phím kèm Ctrl, Alt hoặc Win, ví dụ Ctrl+Alt+E. Bấm vào ô để đặt phím khác.", L"EmojiHotkey", false, emojiKey, C_EMOJIKEY);
     endGroup();
     beginGroup(nullptr);
-    toggleRow(L"Mở Vikey khi đăng nhập", L"Tự mở Vikey mỗi khi bạn đăng nhập vào Windows.", C_LOGIN, prefs::launchAtLogin());
-    toggleRow(L"Tự động cập nhật", L"Mỗi ngày Vikey kiểm tra bản mới trên vikey.app, tự tải về và cài khi bạn thoát Vikey hoặc tắt máy.", C_UPDATE, prefs::getInt(L"AutoUpdate", 1) != 0);
-    HWND fb = row(L"Góp ý", L"Báo lỗi hoặc góp ý cho Vikey: mở trang vikey.app/feedback trong trình duyệt.", L"VikeyButton", C_FEEDBACK, 120, 26, WS_TABSTOP);
+    toggleRow(L"Mở VNKey khi đăng nhập", L"Tự mở VNKey mỗi khi bạn đăng nhập vào Windows.", C_LOGIN, prefs::launchAtLogin());
+    toggleRow(L"Tự động cập nhật", L"Mỗi ngày VNKey kiểm tra bản mới trên vikey.app, tự tải về và cài khi bạn thoát VNKey hoặc tắt máy.", C_UPDATE, prefs::getInt(L"AutoUpdate", 1) != 0);
+    HWND fb = row(L"Góp ý", L"Báo lỗi hoặc góp ý cho VNKey: mở trang vikey.app/feedback trong trình duyệt.", L"VikeyButton", C_FEEDBACK, 120, 26, WS_TABSTOP);
     SetWindowTextW(fb, L"Gửi góp ý…"); setBg(fb, GROUP);
     endGroup();
     refreshEnabled();
@@ -454,7 +454,7 @@ void showSettings(HINSTANCE inst, bool firstRun) {
     if (_win) { bringToFront(_win); return; }
     static bool reg = false;
     if (!reg) { WNDCLASSW wc = {}; wc.lpfnWndProc = mainProc; wc.hInstance = inst; wc.lpszClassName = L"VikeyMain"; wc.hbrBackground = nullptr; wc.hCursor = LoadCursor(nullptr, IDC_ARROW); wc.hIcon = LoadIconW(inst, MAKEINTRESOURCEW(IDI_APP)); RegisterClassW(&wc); reg = true; }
-    _win = CreateWindowExW(0, L"VikeyMain", L"Vikey", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN, 0, 0, W, 600, nullptr, nullptr, inst, nullptr);
+    _win = CreateWindowExW(0, L"VikeyMain", L"VNKey", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN, 0, 0, W, 600, nullptr, nullptr, inst, nullptr);
     buildMain();
     centerOnMouseScreen(_win);   // Tony: open in the middle of the screen (Mac 1.0.16/1.0.18)
     bringToFront(_win);
@@ -476,7 +476,7 @@ static std::wstring normalize(const std::wstring& s) {
     if (!c.empty()) CharLowerBuffW(&c[0], (DWORD)c.size()); return c;
 }
 static std::wstring practiceText() {
-    return core::language() == 1 ? L"Gõ đúng các phím bên dưới, kể cả tiếng Anh. Vikey bỏ dấu cho tiếng Việt và để nguyên tiếng Anh."
+    return core::language() == 1 ? L"Gõ đúng các phím bên dưới, kể cả tiếng Anh. VNKey bỏ dấu cho tiếng Việt và để nguyên tiếng Anh."
                                  : L"Bạn đang ở tiếng Anh: bấm " + hotkeyDisplay(currentHotkey()) + L" để sang tiếng Việt, rồi gõ các phím bên dưới.";
 }
 static LRESULT CALLBACK practiceEditProc(HWND h, UINT m, WPARAM w, LPARAM l, UINT_PTR id, DWORD_PTR) {
@@ -497,7 +497,7 @@ static void buildOnboarding() {
     switch (_step) {
     case S_WELCOME: {
         _oy[0] = y; y += 28 + 14;
-        _oy[1] = y; y += textHeight(fBody, L"Vikey chỉ hỗ trợ Telex, kiểu gõ phổ biến nhất. Bạn gõ tiếng Anh bình thường, Vikey tự nhận ra và không bỏ dấu nhầm.", OCW) + 14;
+        _oy[1] = y; y += textHeight(fBody, L"VNKey chỉ hỗ trợ Telex, kiểu gõ phổ biến nhất. Bạn gõ tiếng Anh bình thường, VNKey tự nhận ra và không bỏ dấu nhầm.", OCW) + 14;
         _oy[2] = y;   // the Telex table
         break; }
     case S_PRACTICE: {
@@ -515,7 +515,7 @@ static void buildOnboarding() {
         break; }
     case S_HOTKEY: {
         _oy[0] = y; y += 28 + 14;
-        std::wstring t = L"Vikey tự chuyển khi bạn gõ lẫn tiếng Anh. Khi muốn tự chuyển, bấm phím tắt này. Bấm vào ô để đổi phím.";
+        std::wstring t = L"VNKey tự chuyển khi bạn gõ lẫn tiếng Anh. Khi muốn tự chuyển, bấm phím tắt này. Bấm vào ô để đổi phím.";
         _oy[1] = y; y += textHeight(fBody, t, OCW) + 14;
         makeRecorder(_onbWin, L"SwitchKeyStatus", true, currentHotkey(), OP, y, 150, 34, O_REC, GROUP);
         _oy[2] = y; y += 34 + 14;
@@ -567,8 +567,8 @@ static void paintOnboarding(HWND h) {
     auto label = [&](const wchar_t* t, int x, int y, int hgt, COLORREF c = TEXT, HFONT f = nullptr) { SelectObject(mem, f ? f : fBody); SetTextColor(mem, c); RECT r = {x, y, OW - OP, y + hgt}; DrawTextW(mem, t, -1, &r, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX); };
     switch (_step) {
     case S_WELCOME: {
-        title(L"Vikey dùng kiểu gõ Telex", _oy[0]);
-        para(L"Vikey chỉ hỗ trợ Telex, kiểu gõ phổ biến nhất. Bạn gõ tiếng Anh bình thường, Vikey tự nhận ra và không bỏ dấu nhầm.", _oy[1], 60);
+        title(L"VNKey dùng kiểu gõ Telex", _oy[0]);
+        para(L"VNKey chỉ hỗ trợ Telex, kiểu gõ phổ biến nhất. Bạn gõ tiếng Anh bình thường, VNKey tự nhận ra và không bỏ dấu nhầm.", _oy[1], 60);
         static const wchar_t* T[4][4][2] = {{{L"aa", L"â"}, {L"aw", L"ă"}, {L"ee", L"ê"}, {L"oo", L"ô"}}, {{L"ow", L"ơ"}, {L"uw", L"ư"}, {L"dd", L"đ"}, {L"w", L"ư"}},
                                             {{L"s", L"sắc"}, {L"f", L"huyền"}, {L"r", L"hỏi"}, {L"x", L"ngã"}}, {{L"j", L"nặng"}, {L"z", L"xoá dấu"}, {nullptr, nullptr}, {nullptr, nullptr}}};
         int top = _oy[2], rowH = 32, boxH = 14 * 2 + 4 * rowH - 8;
@@ -598,7 +598,7 @@ static void paintOnboarding(HWND h) {
         break; }
     case S_HOTKEY: {
         title(L"Phím chuyển Anh/Việt", _oy[0]);
-        para(L"Vikey tự chuyển khi bạn gõ lẫn tiếng Anh. Khi muốn tự chuyển, bấm phím tắt này. Bấm vào ô để đổi phím.", _oy[1], 60);
+        para(L"VNKey tự chuyển khi bạn gõ lẫn tiếng Anh. Khi muốn tự chuyển, bấm phím tắt này. Bấm vào ô để đổi phím.", _oy[1], 60);
         label(core::language() == 1 ? L"Đang gõ: Tiếng Việt" : L"Đang gõ: English", OP + 150 + 12, _oy[2], 34, SECONDARY);
         label(L"Âm báo khi chuyển", OP, _oy[3], 23);
         break; }
@@ -650,7 +650,7 @@ void showOnboarding(HINSTANCE inst) {
     static bool reg = false;
     if (!reg) { WNDCLASSW wc = {}; wc.lpfnWndProc = onbProc; wc.hInstance = inst; wc.lpszClassName = L"VikeyOnboarding"; wc.hCursor = LoadCursor(nullptr, IDC_ARROW); wc.hIcon = LoadIconW(inst, MAKEINTRESOURCEW(IDI_APP)); RegisterClassW(&wc); reg = true; }
     RECT wr = {0, 0, OW, OH}; AdjustWindowRectEx(&wr, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, FALSE, 0);
-    _onbWin = CreateWindowExW(0, L"VikeyOnboarding", L"Vikey", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN, 0, 0, wr.right - wr.left, wr.bottom - wr.top, nullptr, nullptr, inst, nullptr);
+    _onbWin = CreateWindowExW(0, L"VikeyOnboarding", L"VNKey", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN, 0, 0, wr.right - wr.left, wr.bottom - wr.top, nullptr, nullptr, inst, nullptr);
     int s = prefs::getInt(L"OnboardingStep", -1); _step = s >= 0 && s < S_COUNT ? s : S_WELCOME;   // screenshots
     buildOnboarding();
     centerOnMouseScreen(_onbWin);
@@ -695,8 +695,8 @@ static int _ackScroll = 0, _ackContent = 0; static std::vector<Link> _ackLinks;
 static int paintAck(HDC dc, int top, bool draw) {   // returns the content height
     int y = top + AP; _ackLinks.clear();
     struct Sec { const wchar_t* title; const wchar_t* note; const Credit* items; int n; } secs[] = {
-        {L"Mã nguồn", L"Vikey dùng mã nguồn của:", ACK_CODE, (int)(sizeof(ACK_CODE) / sizeof(*ACK_CODE))},
-        {L"Dữ liệu từ ngữ", L"Vikey tự chuyển Anh/Việt nhờ thống kê từ ngữ đếm từ các nguồn này. Trong ứng dụng chỉ có số liệu thống kê, không có văn bản nào.", ACK_WORDS, (int)(sizeof(ACK_WORDS) / sizeof(*ACK_WORDS))},
+        {L"Mã nguồn", L"VNKey dùng mã nguồn của:", ACK_CODE, (int)(sizeof(ACK_CODE) / sizeof(*ACK_CODE))},
+        {L"Dữ liệu từ ngữ", L"VNKey tự chuyển Anh/Việt nhờ thống kê từ ngữ đếm từ các nguồn này. Trong ứng dụng chỉ có số liệu thống kê, không có văn bản nào.", ACK_WORDS, (int)(sizeof(ACK_WORDS) / sizeof(*ACK_WORDS))},
         {L"Dữ liệu kiểm thử", L"Chỉ dùng để đo và cải thiện độ chính xác, không có trong ứng dụng.", ACK_TEST, (int)(sizeof(ACK_TEST) / sizeof(*ACK_TEST))}};
     SetBkMode(dc, TRANSPARENT);
     for (int si = 0; si < 3; si++) {
@@ -767,15 +767,15 @@ static LRESULT CALLBACK aboutProc(HWND h, UINT msg, WPARAM wp, LPARAM lp) {
         HBRUSH bg = CreateSolidBrush(GROUP); FillRect(mem, &rc, bg); DeleteObject(bg);
         HICON icon = (HICON)LoadImageW(GetModuleHandleW(nullptr), MAKEINTRESOURCEW(IDI_APP), IMAGE_ICON, 96, 96, LR_DEFAULTCOLOR);
         if (icon) { DrawIconEx(mem, (rc.right - 96) / 2, 24, icon, 96, 96, 0, nullptr, DI_NORMAL); DestroyIcon(icon); }
-        SetBkMode(mem, TRANSPARENT); SelectObject(mem, fWordmark); SetTextColor(mem, TEXT); RECT r = {0, 130, rc.right, 160}; DrawTextW(mem, L"Vikey", -1, &r, DT_CENTER | DT_SINGLELINE);
+        SetBkMode(mem, TRANSPARENT); SelectObject(mem, fWordmark); SetTextColor(mem, TEXT); RECT r = {0, 130, rc.right, 160}; DrawTextW(mem, L"VNKey", -1, &r, DT_CENTER | DT_SINGLELINE);
         SelectObject(mem, fSmall); SetTextColor(mem, SECONDARY); RECT r2 = {0, 162, rc.right, 182}; DrawTextW(mem, L"Phiên bản " VIKEY_VERSION_W, -1, &r2, DT_CENTER | DT_SINGLELINE);
         _aboutLinks.clear(); int y = 196;
         std::vector<std::vector<Seg>> lines = {
-            {{L"Tony Dinh", L"", fSmall, SECONDARY}},
+            {{L"NGUYEN TRAN HOANG", L"", fSmall, SECONDARY}},
             {{L"Dựa trên ", L"", fSmall, SECONDARY}, {L"OpenKey", L"https://github.com/tuyenvm/OpenKey", fSmall, ACCENT}, {L" của Tuyen Mai", L"", fSmall, SECONDARY}},
             {{L"Mã nguồn mở theo giấy phép GPL-3.0", L"", fSmall, SECONDARY}},
             {},
-            {{L"vikey.app", L"https://vikey.app", fSmall, ACCENT}, {L"  ·  ", L"", fSmall, SECONDARY}, {L"GitHub", L"https://github.com/tonyminibot/Vikey", fSmall, ACCENT}, {L"  ·  ", L"", fSmall, SECONDARY}, {L"Ghi nhận", L"ack:", fSmall, ACCENT}}};
+            {{L"GitHub", L"https://github.com/TANAKAKENJIROU/VNKey", fSmall, ACCENT}, {L"  ·  ", L"", fSmall, SECONDARY}, {L"Ghi nhận", L"ack:", fSmall, ACCENT}}};
         for (auto& l : lines) { if (l.empty()) { y += 8; continue; } y += drawSegs(mem, l, 0, y, rc.right, true, _aboutLinks) + 1; }
         BitBlt(dc, 0, 0, rc.right, rc.bottom, mem, 0, 0, SRCCOPY); SelectObject(mem, old); DeleteObject(bmp); DeleteDC(mem);
         EndPaint(h, &ps); return 0; }
@@ -793,7 +793,7 @@ void showAbout(HINSTANCE inst) {
     static bool reg = false;
     if (!reg) { WNDCLASSW wc = {}; wc.lpfnWndProc = aboutProc; wc.hInstance = inst; wc.lpszClassName = L"VikeyAbout"; wc.hCursor = LoadCursor(nullptr, IDC_ARROW); wc.hIcon = LoadIconW(inst, MAKEINTRESOURCEW(IDI_APP)); RegisterClassW(&wc); reg = true; }
     RECT wr = {0, 0, 300, 304}; AdjustWindowRectEx(&wr, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, FALSE, 0);
-    _aboutWin = CreateWindowExW(0, L"VikeyAbout", L"Giới thiệu Vikey", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, 0, 0, wr.right - wr.left, wr.bottom - wr.top, nullptr, nullptr, inst, nullptr);
+    _aboutWin = CreateWindowExW(0, L"VikeyAbout", L"Giới thiệu VNKey", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, 0, 0, wr.right - wr.left, wr.bottom - wr.top, nullptr, nullptr, inst, nullptr);
     centerOnMouseScreen(_aboutWin);
     bringToFront(_aboutWin);
 }
@@ -807,7 +807,7 @@ static std::wstring jget(const std::wstring& j, const wchar_t* key) {   // flat 
 }
 struct Period { std::map<std::wstring, int> c; int get(const wchar_t* k) const { auto i = c.find(k); return i == c.end() ? 0 : i->second; } };
 static Period sumStats(int days) {   // TLStat_<day>_<name> registry values
-    Period p; HKEY h; if (RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\Vikey", 0, KEY_READ, &h) != ERROR_SUCCESS) return p;
+    Period p; HKEY h; if (RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\VNKey", 0, KEY_READ, &h) != ERROR_SUCCESS) return p;
     SYSTEMTIME st; GetLocalTime(&st); FILETIME ft; SystemTimeToFileTime(&st, &ft); ULARGE_INTEGER u; u.LowPart = ft.dwLowDateTime; u.HighPart = ft.dwHighDateTime;
     std::wstring from = L"0000";
     if (days > 0) { u.QuadPart -= (ULONGLONG)(days - 1) * 864000000000ULL; ft.dwLowDateTime = u.LowPart; ft.dwHighDateTime = u.HighPart; SYSTEMTIME f; FileTimeToSystemTime(&ft, &f); wchar_t b[16]; swprintf_s(b, L"%04d-%02d-%02d", f.wYear, f.wMonth, f.wDay); from = b; }
@@ -862,7 +862,7 @@ static LRESULT CALLBACK logProc(HWND h, UINT msg, WPARAM wp, LPARAM lp) {
     case WM_COMMAND:
         if (LOWORD(wp) == L_REFRESH) refreshLog();
         else if (LOWORD(wp) == L_OPEN) { core::flushTypingLog(); std::wstring p = core::typingLogPath(); if (GetFileAttributesW(p.c_str()) != INVALID_FILE_ATTRIBUTES) ShellExecuteW(nullptr, L"open", L"explorer.exe", (L"/select,\"" + p + L"\"").c_str(), nullptr, SW_SHOW); else ShellExecuteW(nullptr, L"open", prefs::appDataDir().c_str(), nullptr, nullptr, SW_SHOW); }
-        else if (LOWORD(wp) == L_CLEAR) { if (MessageBoxW(h, L"Số liệu thống kê và file log sẽ bị xoá.", L"Xoá toàn bộ nhật ký gõ?", MB_OKCANCEL | MB_ICONWARNING | MB_DEFBUTTON2) == IDOK) { core::clearTypingLog(); HKEY k; if (RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\Vikey", 0, KEY_READ | KEY_WRITE, &k) == ERROR_SUCCESS) { std::vector<std::wstring> del; for (DWORD i = 0;; i++) { wchar_t name[256]; DWORD nl = 256; if (RegEnumValueW(k, i, name, &nl, nullptr, nullptr, nullptr, nullptr) != ERROR_SUCCESS) break; if (wcsncmp(name, L"TLStat_", 7) == 0) del.push_back(name); } for (auto& d : del) RegDeleteValueW(k, d.c_str()); RegCloseKey(k); } refreshLog(); } }
+        else if (LOWORD(wp) == L_CLEAR) { if (MessageBoxW(h, L"Số liệu thống kê và file log sẽ bị xoá.", L"Xoá toàn bộ nhật ký gõ?", MB_OKCANCEL | MB_ICONWARNING | MB_DEFBUTTON2) == IDOK) { core::clearTypingLog(); HKEY k; if (RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\VNKey", 0, KEY_READ | KEY_WRITE, &k) == ERROR_SUCCESS) { std::vector<std::wstring> del; for (DWORD i = 0;; i++) { wchar_t name[256]; DWORD nl = 256; if (RegEnumValueW(k, i, name, &nl, nullptr, nullptr, nullptr, nullptr) != ERROR_SUCCESS) break; if (wcsncmp(name, L"TLStat_", 7) == 0) del.push_back(name); } for (auto& d : del) RegDeleteValueW(k, d.c_str()); RegCloseKey(k); } refreshLog(); } }
         else if (LOWORD(wp) == C_LOGKEYS) { prefs::setInt(L"TypingLogKeys", toggleOn((HWND)lp)); core::reloadSettings(); }
         return 0;
     case WM_NOTIFY: { NMHDR* n = (NMHDR*)lp;

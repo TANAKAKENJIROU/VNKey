@@ -1,7 +1,6 @@
-; Vikey for Windows installer (Inno Setup 6). Per-user, no admin prompt, so the app can update itself.
-;   iscc /DVersion=1.0.14 /DArch=x64 /DSrc=..\build\App Vikey.iss
+; VNKey installer. Per-user, no admin. GPL-3.0.
 #ifndef Version
-  #define Version "0.0.0"
+  #define Version "1.0.1"
 #endif
 #ifndef Arch
   #define Arch "x64"
@@ -11,66 +10,59 @@
 #endif
 
 [Setup]
-AppId={{7E2B5C1A-9D3F-4C7B-8E61-VIKEY0000001}
-AppName=Vikey
+AppId={{7C4E9A21-5B18-4F63-9D20-1A6E8C3F4B70}
+AppName=VNKey
 AppVersion={#Version}
-AppVerName=Vikey {#Version}
-AppPublisher=Typing Technology Company Limited
-AppPublisherURL=https://vikey.app
-AppSupportURL=https://vikey.app/faq
-AppUpdatesURL=https://vikey.app/download
+AppVerName=VNKey {#Version}
+AppPublisher=NGUYEN TRAN HOANG
+AppPublisherURL=https://github.com/TANAKAKENJIROU/VNKey
+AppSupportURL=https://github.com/TANAKAKENJIROU/VNKey
+AppUpdatesURL=https://github.com/TANAKAKENJIROU/VNKey/releases
 VersionInfoVersion={#Version}
-DefaultDirName={localappdata}\Programs\Vikey
+DefaultDirName={localappdata}\Programs\VNKey
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
+LicenseFile=..\..\LICENSE
 OutputDir=.\out
-OutputBaseFilename=Vikey-{#Version}-{#Arch}-Setup
+OutputBaseFilename=VNKey-Setup
 SetupIconFile=..\App\Vikey.ico
-UninstallDisplayIcon={app}\Vikey.exe
-UninstallDisplayName=Vikey
+UninstallDisplayIcon={app}\VNKey.exe
+UninstallDisplayName=VNKey
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
 CloseApplications=yes
-CloseApplicationsFilter=Vikey.exe
+CloseApplicationsFilter=VNKey.exe
 RestartApplications=no
-#if Arch == "arm64"
-ArchitecturesAllowed=arm64
-ArchitecturesInstallIn64BitMode=arm64
-#else
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
-#endif
 
 [Languages]
 Name: "en"; MessagesFile: "compiler:Default.isl"
 
 [Messages]
-; the few screens people see, in Vietnamese like the app
-WelcomeLabel1=Cài đặt Vikey
-WelcomeLabel2=Vikey {#Version} sẽ được cài cho tài khoản của bạn, không cần quyền quản trị.%n%nBấm Next để tiếp tục.
-FinishedHeadingLabel=Đã cài xong Vikey
-FinishedLabel=Vikey nằm ở khay hệ thống (góc dưới bên phải). Bấm Alt+Z để chuyển Anh/Việt.
-ConfirmUninstall=Gỡ Vikey khỏi máy?
+WelcomeLabel1=Cài đặt VNKey
+WelcomeLabel2=VNKey {#Version} sẽ được cài cho tài khoản của bạn, không cần quyền quản trị.%n%nBấm Next để tiếp tục.
+FinishedHeadingLabel=Đã cài xong VNKey
+FinishedLabel=VNKey nằm ở khay hệ thống (góc dưới bên phải). Bấm Alt+Z để chuyển Anh/Việt.
+ConfirmUninstall=Gỡ VNKey khỏi máy?
 
 [Files]
-Source: "{#Src}\Vikey.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#Src}\VNKey.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{autoprograms}\Vikey"; Filename: "{app}\Vikey.exe"
+Name: "{autoprograms}\VNKey"; Filename: "{app}\VNKey.exe"
 
 [Registry]
-; the app's own "Mở Vikey khi đăng nhập" entry goes away with the app
-Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueName: "Vikey"; Flags: uninsdeletevalue dontcreatekey
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueName: "VNKey"; Flags: uninsdeletevalue dontcreatekey
 
 [Run]
-Filename: "{app}\Vikey.exe"; Description: "Mở Vikey"; Flags: nowait postinstall skipifsilent
-; a self-update (Vikey runs the installer silently with /RELAUNCH=1) brings the app back
-Filename: "{app}\Vikey.exe"; Flags: nowait; Check: ShouldRelaunch
+Filename: "{app}\VNKey.exe"; Description: "Mở VNKey"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\VNKey.exe"; Flags: nowait; Check: ShouldRelaunch
 
 [UninstallRun]
-Filename: "{sys}\taskkill.exe"; Parameters: "/IM Vikey.exe /F"; Flags: runhidden; RunOnceId: "KillVikey"
+Filename: "{sys}\taskkill.exe"; Parameters: "/IM VNKey.exe /F"; Flags: runhidden; RunOnceId: "KillVNKey"
 
 [Code]
 function ShouldRelaunch: Boolean;

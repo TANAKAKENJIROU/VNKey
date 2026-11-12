@@ -1,4 +1,4 @@
-// Vikey for Windows: tray icon (V / E), menu, and the message loop the hooks need.
+// VNKey for Windows: tray icon (V / E), menu, and the message loop the hooks need.
 #include <windows.h>
 #include <shellapi.h>
 #include <string>
@@ -57,7 +57,7 @@ static bool darkTaskbar() {
 }
 static void updateTray(int lang) {
     _nid.hIcon = lang ? _iconV : _iconE;
-    wcscpy_s(_nid.szTip, lang ? L"Vikey – Tiếng Việt" : L"Vikey – English");
+    wcscpy_s(_nid.szTip, lang ? L"VNKey – Tiếng Việt" : L"VNKey – English");
     Shell_NotifyIconW(NIM_MODIFY, &_nid);
 }
 static void toggle(const wchar_t* key, int fallback) { vikey::prefs::setInt(key, !vikey::prefs::getInt(key, fallback)); vikey::core::reloadSettings(); }
@@ -73,17 +73,17 @@ static void showMenu() {
     AppendMenuW(m, MF_STRING | (core::language() ? MF_CHECKED : 0), ID_VIET, (L"Tiếng Việt\t" + hotkeyLabel()).c_str());
     AppendMenuW(m, MF_STRING | (prefs::getInt(L"AutoSwitchByTyping", 1) ? MF_CHECKED : 0), ID_AUTOSWITCH, L"Tự chuyển Anh/Việt");
     AppendMenuW(m, MF_SEPARATOR, 0, nullptr);
-    AppendMenuW(m, MF_STRING, ID_SETTINGS, L"Mở Vikey…");
+    AppendMenuW(m, MF_STRING, ID_SETTINGS, L"Mở VNKey…");
     AppendMenuW(m, MF_SEPARATOR, 0, nullptr);
     AppendMenuW(m, MF_STRING, ID_GUIDE, L"Hướng dẫn…");
     AppendMenuW(m, MF_STRING, ID_FEEDBACK, L"Gửi góp ý…");
     AppendMenuW(m, MF_STRING, ID_UPDATE, L"Kiểm tra cập nhật…");
-    AppendMenuW(m, MF_STRING, ID_ABOUT, L"Giới thiệu Vikey");
+    AppendMenuW(m, MF_STRING, ID_ABOUT, L"Giới thiệu VNKey");
     HMENU dbg = CreatePopupMenu();
     AppendMenuW(dbg, MF_STRING | (prefs::getInt(L"TypingLogEnabled", 0) ? MF_CHECKED : 0), ID_LOGTOGGLE, L"Ghi nhật ký gõ");
     AppendMenuW(dbg, MF_STRING | (prefs::getInt(L"TypingLogEnabled", 0) ? 0 : MF_GRAYED), ID_LOG, L"Xem nhật ký gõ…");
     AppendMenuW(m, MF_POPUP, (UINT_PTR)dbg, L"Gỡ lỗi");
-    AppendMenuW(m, MF_STRING, ID_QUIT, L"Thoát Vikey");
+    AppendMenuW(m, MF_STRING, ID_QUIT, L"Thoát VNKey");
     POINT pt; GetCursorPos(&pt); SetForegroundWindow(_hwnd);
     TrackPopupMenu(m, TPM_RIGHTBUTTON | TPM_BOTTOMALIGN, pt.x, pt.y, 0, _hwnd, nullptr);
     PostMessageW(_hwnd, WM_NULL, 0, 0);   // or the next menu vanishes at once (TrackPopupMenu remarks)
@@ -131,23 +131,23 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE, PWSTR, int) {
     HANDLE single = CreateMutexW(nullptr, TRUE, L"Local\\VikeyRunning");
     if (GetLastError() == ERROR_ALREADY_EXISTS) {   // already running: opening the app again shows its window, like on macOS
         HWND t = FindWindowW(L"VikeyTray", nullptr);
-        if (t) { DWORD pid = 0; GetWindowThreadProcessId(t, &pid); AllowSetForegroundWindow(pid); PostMessageW(t, WM_APP + 3, 0, 0); }   // our foreground right goes to the running Vikey: its window comes to the front
+        if (t) { DWORD pid = 0; GetWindowThreadProcessId(t, &pid); AllowSetForegroundWindow(pid); PostMessageW(t, WM_APP + 3, 0, 0); }   // our foreground right goes to the running VNKey: its window comes to the front
         return 0;
     }
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-    if (vikey::updater::installPendingAtLaunch()) return 0;   // an update downloaded earlier installs now and relaunches Vikey
+    if (vikey::updater::installPendingAtLaunch()) return 0;   // an update downloaded earlier installs now and relaunches VNKey
     vikey::prefs::migrateFromOpenKey();
     WNDCLASSW wc = {}; wc.lpfnWndProc = wndProc; wc.hInstance = inst; wc.lpszClassName = L"VikeyTray";
     RegisterClassW(&wc);
     // hidden top-level, not HWND_MESSAGE: a message-only window gets no broadcasts (TaskbarCreated, WM_SETTINGCHANGE);
     // WS_EX_TOOLWINDOW keeps it out of the taskbar and Alt+Tab
-    _hwnd = CreateWindowExW(WS_EX_TOOLWINDOW, L"VikeyTray", L"Vikey", 0, 0, 0, 0, 0, nullptr, nullptr, inst, nullptr);
+    _hwnd = CreateWindowExW(WS_EX_TOOLWINDOW, L"VikeyTray", L"VNKey", 0, 0, 0, 0, 0, nullptr, nullptr, inst, nullptr);
     bool dark = darkTaskbar(); _iconV = makeIcon(L'V', dark); _iconE = makeIcon(L'E', dark);
     _nid.cbSize = sizeof(_nid); _nid.hWnd = _hwnd; _nid.uID = 1; _nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP; _nid.uCallbackMessage = WM_TRAY; _nid.hIcon = _iconV;
-    wcscpy_s(_nid.szTip, L"Vikey");
+    wcscpy_s(_nid.szTip, L"VNKey");
     Shell_NotifyIconW(NIM_ADD, &_nid);
     vikey::core::setLanguageObserver([](int lang) { updateTray(lang); vikey::ui::languageChanged(lang); });
-    if (!vikey::core::start()) { MessageBoxW(nullptr, L"Không cài được bộ bắt phím (SetWindowsHookEx).", L"Vikey", MB_ICONERROR); return 1; }
+    if (!vikey::core::start()) { MessageBoxW(nullptr, L"Không cài được bộ bắt phím (SetWindowsHookEx).", L"VNKey", MB_ICONERROR); return 1; }
     updateTray(vikey::core::language());
     vikey::emoji::install(inst);
     vikey::core::setEmojiHotkeyHandler([] { PostMessageW(_hwnd, WM_VIKEY_EMOJI, 0, 0); });   // not inside the hook: opening can take a moment

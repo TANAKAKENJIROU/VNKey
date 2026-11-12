@@ -1,5 +1,7 @@
 #include "Core.h"
 #include "Site.h"
+#include <imm.h>
+#pragma comment(lib, "imm32.lib")
 #include "KeyMap.h"
 #include "Prefs.h"
 #include "Engine.h"
@@ -249,10 +251,24 @@ void onSiteChanged(const std::wstring& host) {
 }
 
 // ---- Other input language (Japanese, Chinese...) ------------------------------------------
+#ifndef IMC_GETOPENSTATUS
+#define IMC_GETOPENSTATUS 0x0005
+#endif
+#ifndef WM_IME_CONTROL
+#define WM_IME_CONTROL 0x0283
+#endif
 static void updateOtherInputLanguage() {
     HWND w = GetForegroundWindow(); DWORD tid = GetWindowThreadProcessId(w, nullptr);
     HKL hkl = GetKeyboardLayout(tid); LANGID lang = LOWORD((DWORD_PTR)hkl); WORD primary = PRIMARYLANGID(lang);
-    _otherInputLanguage = !(primary == LANG_ENGLISH || primary == LANG_VIETNAMESE || primary == LANG_NEUTRAL);
+    bool foreign = !(primary == LANG_ENGLISH || primary == LANG_VIETNAMESE || primary == LANG_NEUTRAL);
+    // 日本語レイアウトでも IME が閉じているときは Telex を続ける。開いているときだけ譲る。
+    if (foreign && primary == LANG_JAPANESE) {
+        HWND ime = ImmGetDefaultIMEWnd(w);
+        LRESULT open = ime ? SendMessageW(ime, WM_IME_CONTROL, IMC_GETOPENSTATUS, 0) : 0;
+        _otherInputLanguage = open != 0;
+    } else {
+        _otherInputLanguage = foreign;
+    }
 }
 
 // ---- Pause auto switch after a manual switch (D21) ------------------------------------------

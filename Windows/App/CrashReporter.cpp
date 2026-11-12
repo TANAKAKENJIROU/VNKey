@@ -267,9 +267,9 @@ static void send(const std::wstring& report) {
     field("platform", "windows"); field("version", std::string(VIKEY_VERSION) + " (" + VIKEY_BUILD + ")"); field("os", _os);
     body += "--" + boundary + "\r\nContent-Disposition: form-data; name=\"report\"; filename=\"" + name + "\"\r\nContent-Type: text/plain\r\n\r\n" + text + "\r\n--" + boundary + "--\r\n";
 
-    std::wstring url = prefs::getString(L"crashEndpoint", L""); if (url.empty()) url = DEFAULT_ENDPOINT;
+    std::wstring url = DEFAULT_ENDPOINT;
     URL_COMPONENTS uc = {sizeof(uc)}; wchar_t host[256], path[2048]; uc.lpszHostName = host; uc.dwHostNameLength = 256; uc.lpszUrlPath = path; uc.dwUrlPathLength = 2048;
-    if (!WinHttpCrackUrl(url.c_str(), 0, 0, &uc)) return;
+    if (!WinHttpCrackUrl(url.c_str(), 0, 0, &uc) || uc.nScheme != INTERNET_SCHEME_HTTPS) return;
     HINTERNET s = WinHttpOpen(L"Vikey/" VIKEY_VERSION_W, WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
     if (!s) return;
     HINTERNET c = WinHttpConnect(s, host, uc.nPort, 0);
